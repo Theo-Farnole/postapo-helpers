@@ -1,5 +1,6 @@
 import chipsIcon from '../assets/resources/chips.webp'
 import foodIcon from '../assets/resources/food.webp'
+import treeIcon from '../assets/resources/Tree3.webp'
 import './Home.css'
 
 function Home() {
@@ -19,6 +20,15 @@ function Home() {
             Food Excess
           </span>
           <span className="home-tool-subtitle">after 5 min with 3x bonus</span>
+        </a>
+        <a className="home-tool" href="#/TreeComparator">
+          <span className="home-tool-title">
+            <img className="home-tool-icon" src={treeIcon} alt="" />
+            Tree comparator
+          </span>
+          <span className="home-tool-subtitle">
+            payback time per tier and per upgrade
+          </span>
         </a>
       </section>
     </main>

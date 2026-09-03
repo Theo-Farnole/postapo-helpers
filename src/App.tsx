@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import logo from './assets/logo.png'
 import chipsIcon from './assets/resources/chips.webp'
 import foodIcon from './assets/resources/food.webp'
+import treeIcon from './assets/resources/Tree3.webp'
 import Home from './pages/Home'
 import ResourcesExcessCalculator from './pages/ResourcesExcessCalculator'
 import FoodAdsExcess from './pages/FoodAdsExcess'
+import TreeComparator from './pages/TreeComparator'
 import './App.css'
 
 function useHashRoute() {
@@ -33,6 +35,11 @@ const PAGES: Record<
     title: 'Food Excess',
     subtitle: 'after 5 min with 3x bonus',
     icon: foodIcon,
+  },
+  '/TreeComparator': {
+    title: 'Tree comparator',
+    subtitle: 'payback time per tier and per upgrade',
+    icon: treeIcon,
   },
 }
 
@@ -76,6 +83,8 @@ function App() {
           <ResourcesExcessCalculator />
         ) : route === '/TycoonBonusCalculator' ? (
           <FoodAdsExcess />
+        ) : route === '/TreeComparator' ? (
+          <TreeComparator />
         ) : (
           <Home />
         )}

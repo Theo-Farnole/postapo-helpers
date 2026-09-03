@@ -1,0 +1,118 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  padding: 32px 24px 64px;
+  text-align: center;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: center;
+  gap: 16px;
+}
+
+.controls label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.controls input {
+  width: 160px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+  font: inherit;
+}
+
+.constant {
+  margin: 0 0 8px;
+  font-family: var(--mono);
+  font-size: 14px;
+}
+
+.error {
+  color: #dc2626;
+  margin: 0;
+}
+
+.tree-comparator .hint {
+  max-width: 46rem;
+  font-size: 15px;
+}
+
+.tree-comparator .hint strong {
+  color: var(--text-h);
+}
+
+.tree-comparator .tree-icon {
+  height: 1.6em;
+  width: auto;
+  vertical-align: -0.45em;
+  margin-inline: 0.15em;
+}
+
+.tree-comparator .table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tree-comparator .tree-table {
+  margin: 0 auto;
+  border-collapse: collapse;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.tree-comparator th,
+.tree-comparator td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+}
+
+.tree-comparator thead th {
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tree-comparator tbody th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--text-h);
+  white-space: nowrap;
+}
+
+.tree-comparator .arrow {
+  margin-inline: 0.4em;
+  color: var(--text);
+}
+
+.tree-comparator td strong {
+  color: var(--text-h);
+}
+
+.tree-comparator .duration {
+  display: block;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.tree-comparator .upgrades {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
