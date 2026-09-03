@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import logo from './assets/logo.png'
 import Home from './pages/Home'
 import ResourcesExcessCalculator from './pages/ResourcesExcessCalculator'
+import FoodAdsExcess from './pages/FoodAdsExcess'
 import './App.css'
 
 function useHashRoute() {
@@ -34,6 +35,8 @@ function App() {
       </header>
       {route === '/ResourcesExcessCalculator' ? (
         <ResourcesExcessCalculator />
+      ) : route === '/TycoonBonusCalculator' ? (
+        <FoodAdsExcess />
       ) : (
         <Home />
       )}

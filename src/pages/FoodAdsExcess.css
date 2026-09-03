@@ -1,0 +1,101 @@
+.tycoon-bonus h1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.tycoon-bonus .food-icon {
+  display: inline-block;
+  height: 1.15em;
+  width: auto;
+  vertical-align: -0.2em;
+  margin-left: 0.25em;
+}
+
+.tycoon-bonus .food-icon-title {
+  height: 0.85em;
+  margin-left: 0;
+}
+
+.tycoon-bonus .food-icon-value {
+  height: 0.9em;
+}
+
+.tycoon-bonus .input-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tycoon-bonus .suffix {
+  color: var(--text-h);
+  font-weight: 500;
+}
+
+.tycoon-bonus .preview {
+  margin: 0;
+}
+
+.tycoon-bonus .value {
+  margin: 8px 0;
+  font-size: 32px;
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.tycoon-bonus .details {
+  font-size: 14px;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  padding: 32px 24px 64px;
+  text-align: center;
+}
+
+.page h1 {
+  font-size: 36px;
+  margin: 0 0 8px;
+}
+
+.page header p {
+  max-width: 46rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: center;
+  gap: 16px;
+}
+
+.controls label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.controls input {
+  width: 160px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+  font: inherit;
+}
+
+.result p {
+  margin: 0 0 8px;
+}
+
+.result strong {
+  color: var(--text-h);
+}
