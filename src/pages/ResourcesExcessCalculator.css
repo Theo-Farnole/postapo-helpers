@@ -1,0 +1,83 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 32px 24px 64px;
+  text-align: left;
+}
+
+.page h1 {
+  font-size: 36px;
+  margin: 0 0 8px;
+}
+
+.page header p,
+.hint,
+.legend {
+  max-width: 46rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 16px;
+}
+
+.controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.controls input {
+  width: 160px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text-h);
+  font: inherit;
+}
+
+.constant {
+  margin: 0 0 8px;
+  font-family: var(--mono);
+  font-size: 14px;
+}
+
+.result p {
+  margin: 0 0 8px;
+}
+
+.result strong {
+  color: var(--text-h);
+}
+
+.breakdown {
+  margin: 16px 0 0;
+  padding-left: 1.2rem;
+  font-size: 15px;
+}
+
+.breakdown li {
+  margin: 4px 0;
+}
+
+.error {
+  color: #dc2626;
+  margin: 0;
+}
+
+.chart {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  height: 360px;
+}
+
+.legend {
+  margin: 8px 0 0;
+  font-size: 14px;
+}
