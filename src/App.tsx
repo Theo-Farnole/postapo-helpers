@@ -40,6 +40,12 @@ function App() {
   const route = useHashRoute()
   const page = PAGES[route] ?? { title: 'Post Apo Tycoon helpers' }
 
+  useEffect(() => {
+    document.title = PAGES[route]
+      ? `${page.title} · Post Apo Tycoon helpers`
+      : 'Post Apo Tycoon helpers'
+  }, [page.title, route])
+
   return (
     <>
       <header className="site-header">
