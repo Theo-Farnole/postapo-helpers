@@ -71,3 +71,29 @@
 .nav a:hover {
   text-decoration: underline;
 }
+
+.site-main {
+  flex: 1;
+}
+
+.site-footer {
+  padding: 16px 24px 24px;
+  border-top: 1px solid var(--border);
+}
+
+.site-footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  color: var(--accent);
+}
+
+.github-icon {
+  width: 1.15em;
+  height: 1.15em;
+}
