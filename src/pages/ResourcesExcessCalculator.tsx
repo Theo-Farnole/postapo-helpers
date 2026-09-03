@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Chart as ChartJS,
   Legend,
@@ -18,9 +18,13 @@ import {
   sampleCurve,
 } from '../resourceExcess'
 import chipsIcon from '../assets/resources/chips.webp'
+import { loadStored, saveStored } from '../localStore'
 import './ResourcesExcessCalculator.css'
 
 ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend)
+
+const TOOL = 'resourcesexcess'
+const DEFAULTS = { revenue: '365000', maximum: '800000000' }
 
 function ChipsIcon() {
   return <img className="chips-icon" src={chipsIcon} alt="" />
@@ -33,8 +37,12 @@ function formatValue(value: number): string {
 }
 
 function ResourcesExcessCalculator() {
-  const [revenue, setRevenue] = useState('365000')
-  const [maximum, setMaximum] = useState('800000000')
+  const [revenue, setRevenue] = useState(() =>
+    loadStored(TOOL, 'revenue', DEFAULTS.revenue),
+  )
+  const [maximum, setMaximum] = useState(() =>
+    loadStored(TOOL, 'maximum', DEFAULTS.maximum),
+  )
 
   const r = parseNumber(revenue)
   const m = parseNumber(maximum)
@@ -47,6 +55,14 @@ function ResourcesExcessCalculator() {
     () => (valid ? sampleCurve(r, m) : []),
     [valid, r, m],
   )
+
+  useEffect(() => {
+    saveStored(TOOL, 'revenue', revenue)
+  }, [revenue])
+
+  useEffect(() => {
+    saveStored(TOOL, 'maximum', maximum)
+  }, [maximum])
 
   return (
     <main className="page">

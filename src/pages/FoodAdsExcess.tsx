@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import foodIcon from '../assets/resources/food.webp'
+import { loadStored, saveStored } from '../localStore'
 import './FoodAdsExcess.css'
 
-const STORAGE_KEY = 'postApoCap'
+const TOOL = 'foodads'
 const TICK_SECONDS = 9
 const DURATION_SECONDS = 300
 const TICKS = Math.floor(DURATION_SECONDS / TICK_SECONDS)
@@ -10,8 +11,7 @@ const LOSS_PER_TICK = 0.99
 const BONUS_MULTIPLIER = 3
 
 function loadCap(): string {
-  const saved = localStorage.getItem(STORAGE_KEY)
-  return saved !== null ? saved : '18'
+  return loadStored(TOOL, 'cap', '18')
 }
 
 function formatFood(value: number): string {
@@ -35,11 +35,8 @@ function FoodAdsExcess() {
     foodCap !== null && foodCap > 0 ? estimatedStock(foodCap) : null
 
   useEffect(() => {
-    if (!valid) {
-      return
-    }
-    localStorage.setItem(STORAGE_KEY, millions)
-  }, [millions, valid])
+    saveStored(TOOL, 'cap', millions)
+  }, [millions])
 
   return (
     <main className="page tycoon-bonus">
