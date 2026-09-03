@@ -50,11 +50,6 @@ function ResourcesExcessCalculator() {
 
   return (
     <main className="page">
-      <header>
-        <h1>Resources excess calculator</h1>
-        <p>after 50% ads bonus</p>
-      </header>
-
       <section className="controls">
         <label>
           <span>

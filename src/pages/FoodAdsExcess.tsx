@@ -43,14 +43,6 @@ function FoodAdsExcess() {
 
   return (
     <main className="page tycoon-bonus">
-      <header>
-        <h1>
-          <img className="food-icon food-icon-title" src={foodIcon} alt="" />
-          Food Excess
-        </h1>
-        <p>after 5 min with 3x bonus</p>
-      </header>
-
       <section className="controls">
         <label>
           <span>Current food cap</span>
