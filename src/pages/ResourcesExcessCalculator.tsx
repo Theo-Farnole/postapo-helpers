@@ -12,7 +12,6 @@ import {
 import { Chart } from 'react-chartjs-2'
 import {
   TICK,
-  exceedCapC,
   idlePayout,
   optimumC,
   parseNumber,
@@ -34,20 +33,16 @@ function formatValue(value: number): string {
 }
 
 function ResourcesExcessCalculator() {
-  const [revenue, setRevenue] = useState('1')
-  const [maximum, setMaximum] = useState('2000')
-  const [current, setCurrent] = useState('0')
+  const [revenue, setRevenue] = useState('365000')
+  const [maximum, setMaximum] = useState('800000000')
 
   const r = parseNumber(revenue)
   const m = parseNumber(maximum)
-  const c = parseNumber(current)
   const valid = r !== null && m !== null && r >= 0 && m >= 0
 
   const optimal = valid ? optimumC(r, m) : null
-  const exceedAt = valid ? exceedCapC(r, m) : null
   const best =
     valid && optimal !== null ? idlePayout(optimal, r, m) : null
-  const now = valid && c !== null && c >= 0 ? idlePayout(c, r, m) : null
   const curve = useMemo(
     () => (valid ? sampleCurve(r, m) : []),
     [valid, r, m],
@@ -63,8 +58,7 @@ function ResourcesExcessCalculator() {
       <section className="controls">
         <label>
           <span>
-            R
-            <ChipsIcon /> · revenue per tick
+            <ChipsIcon /> revenue per tick
           </span>
           <input
             value={revenue}
@@ -74,23 +68,11 @@ function ResourcesExcessCalculator() {
         </label>
         <label>
           <span>
-            M
-            <ChipsIcon /> · maximum resource
+            <ChipsIcon /> maximum resource
           </span>
           <input
             value={maximum}
             onChange={(event) => setMaximum(event.target.value)}
-            inputMode="decimal"
-          />
-        </label>
-        <label>
-          <span>
-            C
-            <ChipsIcon /> · current resource
-          </span>
-          <input
-            value={current}
-            onChange={(event) => setCurrent(event.target.value)}
             inputMode="decimal"
           />
         </label>
@@ -102,9 +84,6 @@ function ResourcesExcessCalculator() {
       ) : (
         <>
           <section className="result">
-            <p>
-              Idle at C = <strong>{formatValue(optimal ?? 0)}</strong>
-            </p>
             <p>
               Then after idle + ad you have{' '}
               <strong>
@@ -121,10 +100,7 @@ function ResourcesExcessCalculator() {
 
           <CurveChart
             points={curve}
-            currentC={c}
-            currentY={now?.total ?? null}
             optimum={optimal ?? 0}
-            optimumY={best?.total ?? 0}
             maxC={m}
           />
         </>
@@ -135,28 +111,18 @@ function ResourcesExcessCalculator() {
 
 type CurveChartProps = {
   points: { c: number; y: number }[]
-  currentC: number | null
-  currentY: number | null
   optimum: number
-  optimumY: number
   maxC: number
 }
 
 function CurveChart({
   points,
-  currentC,
-  currentY,
   optimum,
-  optimumY,
   maxC,
 }: CurveChartProps) {
   const ys = points.map((point) => point.y)
   const yMin = Math.min(maxC, ...ys)
   const yMax = Math.max(maxC, ...ys)
-  const entered =
-    currentC !== null && currentC >= 0 && currentC <= maxC && currentY !== null
-      ? { x: currentC, y: currentY }
-      : null
 
   const data = useMemo<ChartData<'line'>>(
     () => ({
@@ -195,27 +161,9 @@ function CurveChart({
           borderWidth: 2,
           pointRadius: 0,
         },
-        {
-          type: 'line',
-          label: 'Optimum',
-          data: [{ x: optimum, y: optimumY }],
-          borderColor: '#aa3bff',
-          backgroundColor: '#aa3bff',
-          pointRadius: 6,
-          showLine: false,
-        },
-        {
-          type: 'line',
-          label: 'Your C',
-          data: entered ? [entered] : [],
-          borderColor: '#16a34a',
-          backgroundColor: '#16a34a',
-          pointRadius: entered ? 6 : 0,
-          showLine: false,
-        },
       ],
     }),
-    [entered, maxC, optimum, optimumY, points, yMax, yMin],
+    [maxC, optimum, points, yMax, yMin],
   )
 
   const options = useMemo<ChartOptions<'line'>>(
