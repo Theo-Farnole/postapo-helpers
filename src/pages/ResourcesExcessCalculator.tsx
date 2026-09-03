@@ -18,9 +18,14 @@ import {
   parseNumber,
   sampleCurve,
 } from '../resourceExcess'
+import chipsIcon from '../assets/resources/chips.webp'
 import './ResourcesExcessCalculator.css'
 
 ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend)
+
+function ChipsIcon() {
+  return <img className="chips-icon" src={chipsIcon} alt="" />
+}
 
 function formatValue(value: number): string {
   return new Intl.NumberFormat(undefined, { maximumFractionDigits: 4 }).format(
@@ -52,11 +57,15 @@ function ResourcesExcessCalculator() {
     <main className="page">
       <header>
         <h1>Resources excess calculator</h1>
+        <p>after 50% ads bonus</p>
       </header>
 
       <section className="controls">
         <label>
-          <span>R · revenue per tick</span>
+          <span>
+            R
+            <ChipsIcon /> · revenue per tick
+          </span>
           <input
             value={revenue}
             onChange={(event) => setRevenue(event.target.value)}
@@ -64,7 +73,10 @@ function ResourcesExcessCalculator() {
           />
         </label>
         <label>
-          <span>M · maximum resource</span>
+          <span>
+            M
+            <ChipsIcon /> · maximum resource
+          </span>
           <input
             value={maximum}
             onChange={(event) => setMaximum(event.target.value)}
@@ -72,7 +84,10 @@ function ResourcesExcessCalculator() {
           />
         </label>
         <label>
-          <span>C · current resource</span>
+          <span>
+            C
+            <ChipsIcon /> · current resource
+          </span>
           <input
             value={current}
             onChange={(event) => setCurrent(event.target.value)}
@@ -92,8 +107,15 @@ function ResourcesExcessCalculator() {
             </p>
             <p>
               Then after idle + ad you have{' '}
-              <strong>{formatValue(best?.total ?? 0)}</strong>, which is{' '}
-              <strong>{formatValue(best?.overflow ?? 0)}</strong> over the cap.
+              <strong>
+                {formatValue(best?.total ?? 0)}
+                <ChipsIcon />
+              </strong>, which is{' '}
+              <strong>
+                {formatValue(best?.overflow ?? 0)}
+                <ChipsIcon />
+              </strong>{' '}
+              over the cap.
             </p>
           </section>
 

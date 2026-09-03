@@ -1,3 +1,4 @@
+import chipsIcon from '../assets/resources/chips.webp'
 import foodIcon from '../assets/resources/food.webp'
 import './Home.css'
 
@@ -11,7 +12,11 @@ function Home() {
 
       <section className="home-tools" aria-label="Tools">
         <a className="home-tool" href="#/ResourcesExcessCalculator">
-          Resources excess calculator
+          <span className="home-tool-title">
+            <img className="home-tool-icon" src={chipsIcon} alt="" />
+            Resources excess calculator
+          </span>
+          <span className="home-tool-subtitle">after 50% ads bonus</span>
         </a>
         <a className="home-tool" href="#/TycoonBonusCalculator">
           <span className="home-tool-title">
