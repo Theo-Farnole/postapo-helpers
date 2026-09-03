@@ -3,6 +3,7 @@ import {
   Chart as ChartJS,
   Legend,
   LinearScale,
+  LineController,
   LineElement,
   PointElement,
   Tooltip,
@@ -21,7 +22,7 @@ import chipsIcon from '../assets/resources/chips.webp'
 import { loadStored, saveStored } from '../localStore'
 import './ResourcesExcessCalculator.css'
 
-ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend)
+ChartJS.register(LinearScale, LineController, PointElement, LineElement, Tooltip, Legend)
 
 const TOOL = 'resourcesexcess'
 const DEFAULTS = { revenue: '365000', maximum: '800000000' }
