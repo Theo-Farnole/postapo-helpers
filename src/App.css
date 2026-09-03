@@ -1,3 +1,27 @@
+.site-header {
+  display: flex;
+  align-items: center;
+  min-height: 180px;
+  padding: 24px;
+  background-color: #ece6d6;
+  background-image: url('./assets/background-light.webp');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.site-brand {
+  display: inline-flex;
+  line-height: 0;
+}
+
+.site-logo {
+  display: block;
+  height: 96px;
+  width: auto;
+  object-fit: contain;
+}
+
 .nav {
   display: flex;
   gap: 16px;
