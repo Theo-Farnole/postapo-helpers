@@ -97,16 +97,16 @@ function ResourcesExcessCalculator() {
         <>
           <section className="result">
             <p>
-              Then after idle + ad you have{' '}
+              Idle at{' '}
+              <strong>
+                {formatValue(optimal ?? 0)}
+                <ChipsIcon />
+              </strong>{' '}
+              to get{' '}
               <strong>
                 {formatValue(best?.total ?? 0)}
                 <ChipsIcon />
-              </strong>, which is{' '}
-              <strong>
-                {formatValue(best?.overflow ?? 0)}
-                <ChipsIcon />
-              </strong>{' '}
-              over the cap.
+              </strong>
             </p>
           </section>
 
