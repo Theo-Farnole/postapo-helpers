@@ -59,19 +59,28 @@ export function exceedCapC(r: number, m: number, t = TICK): number {
   return Math.min(m, Math.max(0, m - r * t * (1 + AD_BONUS_RATE)))
 }
 
+function curvePoint(c: number, r: number, m: number, t = TICK) {
+  const payout = idlePayout(c, r, m, t)
+  return {
+    c,
+    total: payout.total,
+    earned: payout.filled + payout.adBonus,
+  }
+}
+
 export function sampleCurve(
   r: number,
   m: number,
   t = TICK,
   points = 160,
-): { c: number; y: number }[] {
+): { c: number; total: number; earned: number }[] {
   const maxC = Math.max(m, 0)
   const peak = optimumC(r, m, t)
   const exceed = exceedCapC(r, m, t)
   const xs = new Set<number>([0, exceed, peak, maxC])
 
   if (maxC === 0) {
-    return [{ c: 0, y: idlePayout(0, r, m, t).total }]
+    return [curvePoint(0, r, m, t)]
   }
 
   for (let i = 0; i <= points; i += 1) {
@@ -80,5 +89,5 @@ export function sampleCurve(
 
   return [...xs]
     .sort((a, b) => a - b)
-    .map((c) => ({ c, y: idlePayout(c, r, m, t).total }))
+    .map((c) => curvePoint(c, r, m, t))
 }

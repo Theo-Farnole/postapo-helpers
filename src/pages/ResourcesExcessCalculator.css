@@ -1,10 +1,16 @@
 .page {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   gap: 28px;
   padding: 32px 24px 64px;
   text-align: center;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .page h1 {
@@ -18,23 +24,43 @@
   max-width: 46rem;
 }
 
-.controls {
+.toolbar {
   display: flex;
   flex-wrap: wrap;
-  align-items: end;
-  justify-content: center;
-  gap: 16px;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px 20px;
+  width: 100%;
 }
 
-.controls label {
+.row-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 11.5rem;
+  margin: 0;
+  color: var(--text-h);
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.row-icon {
+  height: 1.5em;
+  width: auto;
+}
+
+.toolbar label {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 6px;
   font-size: 14px;
+  white-space: nowrap;
 }
 
-.chips-icon {
+.resource-icon {
   display: inline-block;
   height: 1.1em;
   width: auto;
@@ -42,7 +68,7 @@
   margin-inline: 0.15em;
 }
 
-.controls input {
+.toolbar input {
   width: 160px;
   padding: 8px 10px;
   border: 1px solid var(--border);
@@ -52,18 +78,24 @@
   font: inherit;
 }
 
+.constant,
+.result,
+.error {
+  margin: 0;
+  white-space: nowrap;
+  flex: 1;
+  text-align: left;
+}
+
 .constant {
-  margin: 0 0 8px;
   font-family: var(--mono);
   font-size: 14px;
 }
 
-.result p {
-  margin: 0 0 8px;
-}
-
-.result strong {
-  color: var(--text-h);
+.result {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text);
 }
 
 .breakdown {
@@ -78,13 +110,86 @@
 
 .error {
   color: #dc2626;
+}
+
+.chart-button,
+.chart-dialog-close {
+  font: inherit;
+  cursor: pointer;
+}
+
+.chart-button {
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 8px 14px;
+  border: 1px solid var(--accent-border);
+  border-radius: 8px;
+  background: var(--accent-bg);
+  color: var(--text-h);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.chart-button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.chart-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.chart-dialog {
+  width: min(920px, calc(100vw - 32px));
+  max-height: calc(100svh - 32px);
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.chart-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.chart-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.chart-dialog-header h2 {
   margin: 0;
+  text-align: left;
+}
+
+.chart-dialog-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 24px;
+  line-height: 1;
+}
+
+.chart-dialog-close:hover {
+  border-color: var(--accent);
 }
 
 .chart {
   position: relative;
-  width: min(720px, 100%);
-  height: 360px;
+  width: 100%;
+  height: 420px;
 }
 
 .legend {
