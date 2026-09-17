@@ -69,7 +69,7 @@
 }
 
 .toolbar input {
-  width: 160px;
+  width: 12.5em;
   padding: 8px 10px;
   border: 1px solid var(--border);
   border-radius: 6px;

@@ -2,12 +2,58 @@ export const TICK = 1200
 export const AD_BONUS_RATE = 0.5
 
 export function parseNumber(value: string): number | null {
-  const trimmed = value.trim().replace(',', '.')
+  const trimmed = stripGrouping(value).replace(',', '.')
   if (trimmed === '') {
     return null
   }
   const parsed = Number(trimmed)
   return Number.isFinite(parsed) ? parsed : null
+}
+
+function stripGrouping(value: string): string {
+  return value.trim().replace(/[\s\u00A0\u202F\u2009]/g, '')
+}
+
+/** Group integer digits with spaces, e.g. 800000000 → "800 000 000". */
+export function formatGroupedInput(value: string): string {
+  const compact = stripGrouping(value)
+  if (compact === '') {
+    return ''
+  }
+
+  const negative = compact.startsWith('-')
+  const unsigned = negative ? compact.slice(1) : compact
+  const decimalSep = unsigned.includes(',') && !unsigned.includes('.') ? ',' : '.'
+  const [rawInt = '', ...rawFrac] = unsigned.replace(',', '.').split('.')
+  const intDigits = rawInt.replace(/\D/g, '')
+  const hasDecimal = unsigned.includes('.') || unsigned.includes(',')
+  const fracDigits = rawFrac.join('').replace(/\D/g, '')
+  const groupedInt = intDigits.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+  const sign = negative ? '-' : ''
+
+  if (!hasDecimal) {
+    return `${sign}${groupedInt}`
+  }
+  return `${sign}${groupedInt}${decimalSep}${fracDigits}`
+}
+
+export function groupedInputCaret(
+  formatted: string,
+  significantBeforeCaret: number,
+): number {
+  if (significantBeforeCaret <= 0) {
+    return formatted.startsWith('-') ? 1 : 0
+  }
+  let seen = 0
+  for (let i = 0; i < formatted.length; i += 1) {
+    if (!/[\s\u00A0\u202F\u2009]/.test(formatted[i])) {
+      seen += 1
+      if (seen === significantBeforeCaret) {
+        return i + 1
+      }
+    }
+  }
+  return formatted.length
 }
 
 export type IdlePayout = {

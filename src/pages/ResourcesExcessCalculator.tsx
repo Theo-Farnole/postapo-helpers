@@ -1,4 +1,5 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import type { InputHTMLAttributes } from 'react'
 import {
   Chart as ChartJS,
   Legend,
@@ -12,6 +13,8 @@ import {
 } from 'chart.js'
 import { Chart } from 'react-chartjs-2'
 import {
+  formatGroupedInput,
+  groupedInputCaret,
   idlePayout,
   optimumC,
   parseNumber,
@@ -67,6 +70,46 @@ function ResourceIcon({ src }: { src: string }) {
   return <img className="resource-icon" src={src} alt="" />
 }
 
+function GroupedNumberInput({
+  value,
+  onChange,
+  ...props
+}: {
+  value: string
+  onChange: (value: string) => void
+} & Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'>) {
+  const inputRef = useRef<HTMLInputElement>(null)
+  const caretRef = useRef<number | null>(null)
+
+  useLayoutEffect(() => {
+    const input = inputRef.current
+    const caret = caretRef.current
+    if (!input || caret === null) {
+      return
+    }
+    input.setSelectionRange(caret, caret)
+    caretRef.current = null
+  }, [value])
+
+  return (
+    <input
+      {...props}
+      ref={inputRef}
+      value={value}
+      onChange={(event) => {
+        const raw = event.target.value
+        const caret = event.target.selectionStart ?? raw.length
+        const significantBefore = raw
+          .slice(0, caret)
+          .replace(/[\s\u00A0\u202F\u2009]/g, '').length
+        const formatted = formatGroupedInput(raw)
+        caretRef.current = groupedInputCaret(formatted, significantBefore)
+        onChange(formatted)
+      }}
+    />
+  )
+}
+
 function formatValue(value: number): string {
   return new Intl.NumberFormat(undefined, { maximumFractionDigits: 4 }).format(
     value,
@@ -88,10 +131,14 @@ function ResourcesExcessCalculator() {
 function ResourceExcessRow({ resource }: { resource: ResourceConfig }) {
   const titleId = useId()
   const [revenue, setRevenue] = useState(() =>
-    loadStored(TOOL, resource.revenueKey, resource.defaults.revenue),
+    formatGroupedInput(
+      loadStored(TOOL, resource.revenueKey, resource.defaults.revenue),
+    ),
   )
   const [maximum, setMaximum] = useState(() =>
-    loadStored(TOOL, resource.maximumKey, resource.defaults.maximum),
+    formatGroupedInput(
+      loadStored(TOOL, resource.maximumKey, resource.defaults.maximum),
+    ),
   )
   const [chartOpen, setChartOpen] = useState(false)
   const [chartReady, setChartReady] = useState(false)
@@ -153,9 +200,9 @@ function ResourceExcessRow({ resource }: { resource: ResourceConfig }) {
           <span>
             <ResourceIcon src={resource.icon} /> revenue per tick
           </span>
-          <input
+          <GroupedNumberInput
             value={revenue}
-            onChange={(event) => setRevenue(event.target.value)}
+            onChange={setRevenue}
             inputMode="decimal"
             aria-label={`${resource.label} revenue per tick`}
           />
@@ -164,9 +211,9 @@ function ResourceExcessRow({ resource }: { resource: ResourceConfig }) {
           <span>
             <ResourceIcon src={resource.icon} /> maximum resource
           </span>
-          <input
+          <GroupedNumberInput
             value={maximum}
-            onChange={(event) => setMaximum(event.target.value)}
+            onChange={setMaximum}
             inputMode="decimal"
             aria-label={`${resource.label} maximum resource`}
           />
