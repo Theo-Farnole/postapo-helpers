@@ -29,6 +29,9 @@ import './ResourcesExcessCalculator.css'
 ChartJS.register(LinearScale, LineController, PointElement, LineElement, Tooltip, Legend)
 
 const TOOL = 'resourcesexcess'
+const TICK_SECONDS = 9
+const FULL_RATE_TICKS = (2 * 60 * 60) / TICK_SECONDS
+const REDUCED_RATE = 0.2
 
 type ResourceConfig = {
   id: string
@@ -113,18 +116,49 @@ function formatValue(value: number): string {
 }
 
 function ResourcesExcessCalculator() {
+  const [offlineMinutes, setOfflineMinutes] = useState(() =>
+    formatGroupedInput(loadStored(TOOL, 'offlineMinutes', '20'))
+  )
+  const om = parseNumber(offlineMinutes)
+  const offlineTicks = om !== null && om >= 0 ? Math.floor((om * 60) / TICK_SECONDS) : null
+  const effectiveTicks =
+    offlineTicks === null
+      ? null
+      : Math.min(offlineTicks, FULL_RATE_TICKS) + Math.max(offlineTicks - FULL_RATE_TICKS, 0) * REDUCED_RATE
+
+  useEffect(() => {
+    saveStored(TOOL, 'offlineMinutes', offlineMinutes)
+  }, [offlineMinutes])
+
   return (
     <main className="page">
+      <div className="toolbar offline-settings">
+        <label>
+          <span>Offline gain (minutes)</span>
+          <GroupedNumberInput
+            value={offlineMinutes}
+            onChange={setOfflineMinutes}
+            inputMode="decimal"
+            aria-label="Offline gain in minutes"
+          />
+          {offlineTicks !== null ? (
+            <small>
+              {offlineTicks} ticks ({TICK_SECONDS} s each)
+            </small>
+          ) : null}
+          <small>100% for the first 2 hours, then 20%.</small>
+        </label>
+      </div>
       <div className="rows">
         {RESOURCES.map((resource) => (
-          <ResourceExcessRow key={resource.id} resource={resource} />
+          <ResourceExcessRow key={resource.id} resource={resource} effectiveTicks={effectiveTicks} />
         ))}
       </div>
     </main>
   )
 }
 
-function ResourceExcessRow({ resource }: { resource: ResourceConfig }) {
+function ResourceExcessRow({ resource, effectiveTicks }: { resource: ResourceConfig; effectiveTicks: number | null }) {
   const titleId = useId()
   const [revenue, setRevenue] = useState(() =>
     formatGroupedInput(loadStored(TOOL, resource.revenueKey, resource.defaults.revenue))
@@ -139,15 +173,11 @@ function ResourceExcessRow({ resource }: { resource: ResourceConfig }) {
   const r = parseNumber(revenue)
   const m = parseNumber(maximum)
   const empty = revenue.trim() === '' && maximum.trim() === ''
-  const valid = r !== null && m !== null && r >= 0 && m >= 0
+  const valid = r !== null && m !== null && r >= 0 && m >= 0 && effectiveTicks !== null
 
-  const optimal = valid ? optimumC(r, m) : null
-  const best =
-    valid && optimal !== null ? idlePayout(optimal, r, m) : null
-  const curve = useMemo(
-    () => (valid ? sampleCurve(r, m) : []),
-    [valid, r, m],
-  )
+  const optimal = valid ? optimumC(r, m, effectiveTicks) : null
+  const best = valid && optimal !== null ? idlePayout(optimal, r, m, effectiveTicks) : null
+  const curve = useMemo(() => (valid ? sampleCurve(r, m, effectiveTicks) : []), [valid, r, m, effectiveTicks])
 
   useEffect(() => {
     saveStored(TOOL, resource.revenueKey, revenue)
