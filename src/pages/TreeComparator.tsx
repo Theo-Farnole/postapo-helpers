@@ -34,14 +34,12 @@ function discountLabel(ratio: number): string {
   const percent = new Intl.NumberFormat(undefined, {
     maximumFractionDigits: 2,
   }).format(Math.abs(1 - ratio) * 100)
-  return ratio < 1
-    ? `${percent}% global discount`
-    : `${percent}% above base price`
+  return ratio < 1 ? `${percent}% global discount` : `${percent}% above base price`
 }
 
 function TreeComparator() {
   const [referencePrice, setReferencePrice] = useState(() =>
-    loadStored(TOOL, 'referencePrice', DEFAULT_REFERENCE_PRICE),
+    loadStored(TOOL, 'referencePrice', DEFAULT_REFERENCE_PRICE)
   )
 
   const price = parseNumber(referencePrice)
@@ -59,8 +57,7 @@ function TreeComparator() {
       <section className="controls">
         <label>
           <span>
-            <TreeIcon tier={REFERENCE_TREE_INDEX} /> {REFERENCE_TREE.label}{' '}
-            price in your game
+            <TreeIcon tier={REFERENCE_TREE_INDEX} /> {REFERENCE_TREE.label} price in your game
           </span>
           <input
             value={referencePrice}
@@ -72,16 +69,12 @@ function TreeComparator() {
       </section>
 
       {!valid ? (
-        <p className="error">
-          Enter a {REFERENCE_TREE.label} price above 0.
-        </p>
+        <p className="error">Enter a {REFERENCE_TREE.label} price above 0.</p>
       ) : (
         <>
           <p className="hint">
-            Base {REFERENCE_TREE.label} price is{' '}
-            {formatGold(REFERENCE_TREE.baseCost)} gold, so you have{' '}
-            <strong>{discountLabel(priceRatio(price))}</strong>. Every other
-            tier is scaled by the same factor.
+            Base {REFERENCE_TREE.label} price is {formatGold(REFERENCE_TREE.baseCost)} gold, so you have{' '}
+            <strong>{discountLabel(priceRatio(price))}</strong>. Every other tier is scaled by the same factor.
           </p>
 
           <section className="table-wrap">
@@ -109,9 +102,7 @@ function TreeComparator() {
                     <td>{formatGold(row.goldPerPollution)}</td>
                     <td>
                       <strong>{formatTicks(row.breakEvenTicks)} ticks</strong>
-                      <span className="duration">
-                        {formatDuration(row.breakEvenTicks * TICK_SECONDS)}
-                      </span>
+                      <span className="duration">{formatDuration(row.breakEvenTicks * TICK_SECONDS)}</span>
                     </td>
                   </tr>
                 ))}
@@ -122,8 +113,7 @@ function TreeComparator() {
           <section className="upgrades">
             <h2>Upgrade payback</h2>
             <p className="hint">
-              An upgrade costs the full price of the new tree, but only earns
-              you the difference in gold per tick.
+              An upgrade costs the full price of the new tree, but only earns you the difference in gold per tick.
             </p>
             <div className="table-wrap">
               <table className="tree-table">
@@ -153,9 +143,7 @@ function TreeComparator() {
                       <td>−{upgrade.extraPollution}</td>
                       <td>
                         <strong>{formatTicks(upgrade.ticks)} ticks</strong>
-                        <span className="duration">
-                          {formatDuration(upgrade.ticks * TICK_SECONDS)}
-                        </span>
+                        <span className="duration">{formatDuration(upgrade.ticks * TICK_SECONDS)}</span>
                       </td>
                     </tr>
                   ))}

@@ -15,9 +15,7 @@ function loadCap(): string {
 }
 
 function formatFood(value: number): string {
-  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(
-    Math.round(value),
-  )
+  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(Math.round(value))
 }
 
 function estimatedStock(cap: number): number {
@@ -31,8 +29,7 @@ function FoodAdsExcess() {
   const cap = Number.parseFloat(millions)
   const valid = Number.isFinite(cap)
   const foodCap = valid ? cap * 1_000_000 : null
-  const stock =
-    foodCap !== null && foodCap > 0 ? estimatedStock(foodCap) : null
+  const stock = foodCap !== null && foodCap > 0 ? estimatedStock(foodCap) : null
 
   useEffect(() => {
     saveStored(TOOL, 'cap', millions)

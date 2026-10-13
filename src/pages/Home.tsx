@@ -26,9 +26,7 @@ function Home() {
             <img className="home-tool-icon" src={treeIcon} alt="" />
             Tree comparator
           </span>
-          <span className="home-tool-subtitle">
-            payback time per tier and per upgrade
-          </span>
+          <span className="home-tool-subtitle">payback time per tier and per upgrade</span>
         </a>
       </section>
     </main>

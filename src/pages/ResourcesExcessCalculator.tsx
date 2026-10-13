@@ -99,9 +99,7 @@ function GroupedNumberInput({
       onChange={(event) => {
         const raw = event.target.value
         const caret = event.target.selectionStart ?? raw.length
-        const significantBefore = raw
-          .slice(0, caret)
-          .replace(/[\s\u00A0\u202F\u2009]/g, '').length
+        const significantBefore = raw.slice(0, caret).replace(/[\s\u00A0\u202F\u2009]/g, '').length
         const formatted = formatGroupedInput(raw)
         caretRef.current = groupedInputCaret(formatted, significantBefore)
         onChange(formatted)
@@ -111,9 +109,7 @@ function GroupedNumberInput({
 }
 
 function formatValue(value: number): string {
-  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 4 }).format(
-    value,
-  )
+  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 4 }).format(value)
 }
 
 function ResourcesExcessCalculator() {
@@ -131,14 +127,10 @@ function ResourcesExcessCalculator() {
 function ResourceExcessRow({ resource }: { resource: ResourceConfig }) {
   const titleId = useId()
   const [revenue, setRevenue] = useState(() =>
-    formatGroupedInput(
-      loadStored(TOOL, resource.revenueKey, resource.defaults.revenue),
-    ),
+    formatGroupedInput(loadStored(TOOL, resource.revenueKey, resource.defaults.revenue))
   )
   const [maximum, setMaximum] = useState(() =>
-    formatGroupedInput(
-      loadStored(TOOL, resource.maximumKey, resource.defaults.maximum),
-    ),
+    formatGroupedInput(loadStored(TOOL, resource.maximumKey, resource.defaults.maximum))
   )
   const [chartOpen, setChartOpen] = useState(false)
   const [chartReady, setChartReady] = useState(false)
@@ -219,12 +211,11 @@ function ResourceExcessRow({ resource }: { resource: ResourceConfig }) {
           />
         </label>
         {valid ? (
-        <p className="result">
-          Idle at {formatValue(optimal ?? 0)}
-          <ResourceIcon src={resource.icon} /> to get{' '}
-          {formatValue(best?.total ?? 0)}
-          <ResourceIcon src={resource.icon} />
-        </p>
+          <p className="result">
+            Idle at {formatValue(optimal ?? 0)}
+            <ResourceIcon src={resource.icon} /> to get {formatValue(best?.total ?? 0)}
+            <ResourceIcon src={resource.icon} />
+          </p>
         ) : empty ? null : (
           <p className="error">Enter non-negative numbers for R and M.</p>
         )}
@@ -262,13 +253,7 @@ function ResourceExcessRow({ resource }: { resource: ResourceConfig }) {
             ×
           </button>
         </div>
-        {chartReady && valid ? (
-          <CurveChart
-            points={curve}
-            optimum={optimal ?? 0}
-            maxC={m}
-          />
-        ) : null}
+        {chartReady && valid ? <CurveChart points={curve} optimum={optimal ?? 0} maxC={m} /> : null}
       </dialog>
     </section>
   )
@@ -280,22 +265,9 @@ type CurveChartProps = {
   maxC: number
 }
 
-function CurveChart({
-  points,
-  optimum,
-  maxC,
-}: CurveChartProps) {
-  const yMin = Math.min(
-    0,
-    maxC,
-    ...points.map((point) => point.total),
-    ...points.map((point) => point.earned),
-  )
-  const yMax = Math.max(
-    maxC,
-    ...points.map((point) => point.total),
-    ...points.map((point) => point.earned),
-  )
+function CurveChart({ points, optimum, maxC }: CurveChartProps) {
+  const yMin = Math.min(0, maxC, ...points.map((point) => point.total), ...points.map((point) => point.earned))
+  const yMax = Math.max(maxC, ...points.map((point) => point.total), ...points.map((point) => point.earned))
 
   const data = useMemo<ChartData<'line'>>(
     () => ({
@@ -346,7 +318,7 @@ function CurveChart({
         },
       ],
     }),
-    [maxC, optimum, points, yMax, yMin],
+    [maxC, optimum, points, yMax, yMin]
   )
 
   const options = useMemo<ChartOptions<'line'>>(
@@ -370,7 +342,7 @@ function CurveChart({
         legend: { position: 'bottom' },
       },
     }),
-    [maxC, yMin],
+    [maxC, yMin]
   )
 
   return (

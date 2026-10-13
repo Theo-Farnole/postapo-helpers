@@ -22,10 +22,7 @@ function useHashRoute() {
   return path.startsWith('/') ? path : `/${path}`
 }
 
-const PAGES: Record<
-  string,
-  { title: string; subtitle?: string; icon?: string }
-> = {
+const PAGES: Record<string, { title: string; subtitle?: string; icon?: string }> = {
   '/ResourcesExcessCalculator': {
     title: 'Resources excess calculator',
     subtitle: 'after 50% ads bonus',
@@ -48,31 +45,18 @@ function App() {
   const page = PAGES[route] ?? { title: 'Post Apo Tycoon helpers' }
 
   useEffect(() => {
-    document.title = PAGES[route]
-      ? `${page.title} · Post Apo Tycoon helpers`
-      : 'Post Apo Tycoon helpers'
+    document.title = PAGES[route] ? `${page.title} · Post Apo Tycoon helpers` : 'Post Apo Tycoon helpers'
   }, [page.title, route])
 
   return (
     <>
       <header className="site-header">
-        <a
-          className="site-brand"
-          href="#/"
-          aria-label="Post Apo Tycoon helpers home"
-        >
-          <img
-            className="site-logo"
-            src={logo}
-            alt=""
-            height={96}
-          />
+        <a className="site-brand" href="#/" aria-label="Post Apo Tycoon helpers home">
+          <img className="site-logo" src={logo} alt="" height={96} />
         </a>
         <div className="site-heading">
           <h1>
-            {page.icon ? (
-              <img className="site-heading-icon" src={page.icon} alt="" />
-            ) : null}
+            {page.icon ? <img className="site-heading-icon" src={page.icon} alt="" /> : null}
             {page.title}
           </h1>
           {page.subtitle ? <p>{page.subtitle}</p> : null}
@@ -90,16 +74,8 @@ function App() {
         )}
       </div>
       <footer className="site-footer">
-        <a
-          href="https://github.com/Theo-Farnole/postapo-helpers"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <svg
-            className="github-icon"
-            viewBox="0 0 19 19"
-            aria-hidden="true"
-          >
+        <a href="https://github.com/Theo-Farnole/postapo-helpers" target="_blank" rel="noreferrer">
+          <svg className="github-icon" viewBox="0 0 19 19" aria-hidden="true">
             <path
               fill="currentColor"
               fillRule="evenodd"
