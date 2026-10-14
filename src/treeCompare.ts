@@ -95,13 +95,9 @@ export function formatDuration(seconds: number): string {
 }
 
 export function formatGold(value: number): string {
-  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(
-    Math.round(value),
-  )
+  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(Math.round(value))
 }
 
 export function formatTicks(ticks: number): string {
-  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(
-    Math.ceil(ticks),
-  )
+  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(Math.ceil(ticks))
 }

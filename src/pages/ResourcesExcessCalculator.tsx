@@ -29,6 +29,9 @@ import './ResourcesExcessCalculator.css'
 ChartJS.register(LinearScale, LineController, PointElement, LineElement, Tooltip, Legend)
 
 const TOOL = 'resourcesexcess'
+const TICK_SECONDS = 9
+const FULL_RATE_TICKS = (2 * 60 * 60) / TICK_SECONDS
+const REDUCED_RATE = 0.2
 
 type ResourceConfig = {
   id: string
@@ -99,9 +102,7 @@ function GroupedNumberInput({
       onChange={(event) => {
         const raw = event.target.value
         const caret = event.target.selectionStart ?? raw.length
-        const significantBefore = raw
-          .slice(0, caret)
-          .replace(/[\s\u00A0\u202F\u2009]/g, '').length
+        const significantBefore = raw.slice(0, caret).replace(/[\s\u00A0\u202F\u2009]/g, '').length
         const formatted = formatGroupedInput(raw)
         caretRef.current = groupedInputCaret(formatted, significantBefore)
         onChange(formatted)
@@ -111,34 +112,59 @@ function GroupedNumberInput({
 }
 
 function formatValue(value: number): string {
-  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 4 }).format(
-    value,
-  )
+  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 4 }).format(value)
 }
 
 function ResourcesExcessCalculator() {
+  const [offlineMinutes, setOfflineMinutes] = useState(() =>
+    formatGroupedInput(loadStored(TOOL, 'offlineMinutes', '20'))
+  )
+  const om = parseNumber(offlineMinutes)
+  const offlineTicks = om !== null && om >= 0 ? Math.floor((om * 60) / TICK_SECONDS) : null
+  const effectiveTicks =
+    offlineTicks === null
+      ? null
+      : Math.min(offlineTicks, FULL_RATE_TICKS) + Math.max(offlineTicks - FULL_RATE_TICKS, 0) * REDUCED_RATE
+
+  useEffect(() => {
+    saveStored(TOOL, 'offlineMinutes', offlineMinutes)
+  }, [offlineMinutes])
+
   return (
     <main className="page">
+      <div className="toolbar offline-settings">
+        <label>
+          <span>Offline gain (minutes)</span>
+          <GroupedNumberInput
+            value={offlineMinutes}
+            onChange={setOfflineMinutes}
+            inputMode="decimal"
+            aria-label="Offline gain in minutes"
+          />
+          {offlineTicks !== null ? (
+            <small>
+              {offlineTicks} ticks ({TICK_SECONDS} s each)
+            </small>
+          ) : null}
+          <small>100% for the first 2 hours, then 20%.</small>
+        </label>
+      </div>
       <div className="rows">
         {RESOURCES.map((resource) => (
-          <ResourceExcessRow key={resource.id} resource={resource} />
+          <ResourceExcessRow key={resource.id} resource={resource} effectiveTicks={effectiveTicks} />
         ))}
       </div>
     </main>
   )
 }
 
-function ResourceExcessRow({ resource }: { resource: ResourceConfig }) {
+function ResourceExcessRow({ resource, effectiveTicks }: { resource: ResourceConfig; effectiveTicks: number | null }) {
   const titleId = useId()
   const [revenue, setRevenue] = useState(() =>
-    formatGroupedInput(
-      loadStored(TOOL, resource.revenueKey, resource.defaults.revenue),
-    ),
+    formatGroupedInput(loadStored(TOOL, resource.revenueKey, resource.defaults.revenue))
   )
   const [maximum, setMaximum] = useState(() =>
-    formatGroupedInput(
-      loadStored(TOOL, resource.maximumKey, resource.defaults.maximum),
-    ),
+    formatGroupedInput(loadStored(TOOL, resource.maximumKey, resource.defaults.maximum))
   )
   const [chartOpen, setChartOpen] = useState(false)
   const [chartReady, setChartReady] = useState(false)
@@ -147,15 +173,11 @@ function ResourceExcessRow({ resource }: { resource: ResourceConfig }) {
   const r = parseNumber(revenue)
   const m = parseNumber(maximum)
   const empty = revenue.trim() === '' && maximum.trim() === ''
-  const valid = r !== null && m !== null && r >= 0 && m >= 0
+  const valid = r !== null && m !== null && r >= 0 && m >= 0 && effectiveTicks !== null
 
-  const optimal = valid ? optimumC(r, m) : null
-  const best =
-    valid && optimal !== null ? idlePayout(optimal, r, m) : null
-  const curve = useMemo(
-    () => (valid ? sampleCurve(r, m) : []),
-    [valid, r, m],
-  )
+  const optimal = valid ? optimumC(r, m, effectiveTicks) : null
+  const best = valid && optimal !== null ? idlePayout(optimal, r, m, effectiveTicks) : null
+  const curve = useMemo(() => (valid ? sampleCurve(r, m, effectiveTicks) : []), [valid, r, m, effectiveTicks])
 
   useEffect(() => {
     saveStored(TOOL, resource.revenueKey, revenue)
@@ -219,12 +241,11 @@ function ResourceExcessRow({ resource }: { resource: ResourceConfig }) {
           />
         </label>
         {valid ? (
-        <p className="result">
-          Idle at {formatValue(optimal ?? 0)}
-          <ResourceIcon src={resource.icon} /> to get{' '}
-          {formatValue(best?.total ?? 0)}
-          <ResourceIcon src={resource.icon} />
-        </p>
+          <p className="result">
+            Idle at {formatValue(optimal ?? 0)}
+            <ResourceIcon src={resource.icon} /> to get {formatValue(best?.total ?? 0)}
+            <ResourceIcon src={resource.icon} />
+          </p>
         ) : empty ? null : (
           <p className="error">Enter non-negative numbers for R and M.</p>
         )}
@@ -262,13 +283,7 @@ function ResourceExcessRow({ resource }: { resource: ResourceConfig }) {
             ×
           </button>
         </div>
-        {chartReady && valid ? (
-          <CurveChart
-            points={curve}
-            optimum={optimal ?? 0}
-            maxC={m}
-          />
-        ) : null}
+        {chartReady && valid ? <CurveChart points={curve} optimum={optimal ?? 0} maxC={m} /> : null}
       </dialog>
     </section>
   )
@@ -280,22 +295,9 @@ type CurveChartProps = {
   maxC: number
 }
 
-function CurveChart({
-  points,
-  optimum,
-  maxC,
-}: CurveChartProps) {
-  const yMin = Math.min(
-    0,
-    maxC,
-    ...points.map((point) => point.total),
-    ...points.map((point) => point.earned),
-  )
-  const yMax = Math.max(
-    maxC,
-    ...points.map((point) => point.total),
-    ...points.map((point) => point.earned),
-  )
+function CurveChart({ points, optimum, maxC }: CurveChartProps) {
+  const yMin = Math.min(0, maxC, ...points.map((point) => point.total), ...points.map((point) => point.earned))
+  const yMax = Math.max(maxC, ...points.map((point) => point.total), ...points.map((point) => point.earned))
 
   const data = useMemo<ChartData<'line'>>(
     () => ({
@@ -346,7 +348,7 @@ function CurveChart({
         },
       ],
     }),
-    [maxC, optimum, points, yMax, yMin],
+    [maxC, optimum, points, yMax, yMin]
   )
 
   const options = useMemo<ChartOptions<'line'>>(
@@ -370,7 +372,7 @@ function CurveChart({
         legend: { position: 'bottom' },
       },
     }),
-    [maxC, yMin],
+    [maxC, yMin]
   )
 
   return (

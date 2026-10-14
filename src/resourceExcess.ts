@@ -37,10 +37,7 @@ export function formatGroupedInput(value: string): string {
   return `${sign}${groupedInt}${decimalSep}${fracDigits}`
 }
 
-export function groupedInputCaret(
-  formatted: string,
-  significantBeforeCaret: number,
-): number {
+export function groupedInputCaret(formatted: string, significantBeforeCaret: number): number {
   if (significantBeforeCaret <= 0) {
     return formatted.startsWith('-') ? 1 : 0
   }
@@ -68,12 +65,7 @@ export type IdlePayout = {
 /**
  * Excel: C + min(R*T, M-C) + min(R*T, max(M-C, 0)) * 0.5
  */
-export function idlePayout(
-  c: number,
-  r: number,
-  m: number,
-  t = TICK,
-): IdlePayout {
+export function idlePayout(c: number, r: number, m: number, t = TICK): IdlePayout {
   const idleGain = r * t
   const room = m - c
   const filled = Math.min(idleGain, room)
@@ -118,7 +110,7 @@ export function sampleCurve(
   r: number,
   m: number,
   t = TICK,
-  points = 160,
+  points = 160
 ): { c: number; total: number; earned: number }[] {
   const maxC = Math.max(m, 0)
   const peak = optimumC(r, m, t)
@@ -133,7 +125,5 @@ export function sampleCurve(
     xs.add((i / points) * maxC)
   }
 
-  return [...xs]
-    .sort((a, b) => a - b)
-    .map((c) => curvePoint(c, r, m, t))
+  return [...xs].sort((a, b) => a - b).map((c) => curvePoint(c, r, m, t))
 }

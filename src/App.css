@@ -6,9 +6,7 @@
   min-height: 180px;
   padding: 24px;
   background-color: #1a1410;
-  background-image:
-    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url('./assets/background-light.webp');
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./assets/background-light.webp');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
